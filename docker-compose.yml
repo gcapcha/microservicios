@@ -1,0 +1,59 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginxapi.conf:/etc/nginx/nginx.conf
+    networks:
+      - tumi_micro_local
+
+  # soft
+  smsoft:
+    image: webdevops/php-nginx:7.2
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./apps/sm-soft/source:/app:rw
+      - ./nginx/nginxapi.conf:/etc/nginx/nginx.conf
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+      - VIRTUAL_HOST=sm-soft.localhost
+    networks:
+      - tumi_micro_local
+
+  webpaneltumipos:
+    image: webdevops/php-nginx:7.1
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./apps/webpaneltumipos:/app:rw
+      - ./nginx/nginxapi.conf:/etc/nginx/nginx.conf
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+      - VIRTUAL_HOST=adminsoft.localhost
+    networks:
+      - tumi_micro_local
+  apifac:
+    image: webdevops/php-nginx:7.2-alpine
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./apps/api-factura/source:/app:rw
+      - ./nginx/nginxapi.conf:/etc/nginx/nginx.conf
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+      - VIRTUAL_HOST=api-factura.localhost
+    networks:
+      - tumi_micro_local
+networks:
+  tumi_micro_local:
+
+
